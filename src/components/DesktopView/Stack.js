@@ -37,8 +37,8 @@ const Stack = ({ stack }) => {
 			>
 				<SortableContext items={stack.cards} strategy={verticalListSortingStrategy}>
 					{stack.cards
-						.slice(0)
-						.reverse()
+						// .slice(0)
+						// .reverse()
 						.map((card, index) => {
 							return (
 								<Card
