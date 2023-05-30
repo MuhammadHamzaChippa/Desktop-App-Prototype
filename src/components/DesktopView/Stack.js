@@ -1,10 +1,32 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { AiOutlineFullscreen } from "react-icons/ai";
+import { useDraggable } from "@dnd-kit/core";
 const Stack = ({ stack }) => {
 	const [showStack, setShowStack] = useState(false);
+	const { attributes, listeners, isDragging, setNodeRef, transform } = useDraggable({
+		id: stack.title,
+		data: { type: "stack" },
+	});
+
+	function getStyles(left, top, transform) {
+		return {
+			cursor: "grab",
+			position: "absolute",
+			"--top": `${top}px`,
+			"--left": `${left}px`,
+			"--translate-x": `${transform?.x ?? 0}px`,
+			"--translate-y": `${transform?.y ?? 0}px`,
+		};
+	}
+
 	return (
-		<div style={{ top: stack.y, left: stack.x }} key={stack.title} className="absolute">
+		<div
+			className="stack"
+			style={{ ...getStyles(stack.x, stack.y, transform) }}
+			key={stack.title}
+			ref={setNodeRef}
+		>
 			<motion.div
 				initial={false}
 				animate={{
@@ -35,8 +57,10 @@ const Stack = ({ stack }) => {
 					})}
 			</motion.div>
 			<div
+				{...attributes}
+				{...listeners}
 				style={{ zIndex: stack.cards.length + 1 }}
-				className="relative flex items-center justify-between w-[176px] bg-[#29AAE1] mt-[-20px] w-fit text-[white] cursor-pointer rounded-[8px] py-[4px] px-[8px]"
+				className="relative flex items-center justify-between w-[176px] bg-[#29AAE1] mt-[-20px] text-[white] cursor-pointer rounded-[8px] py-[4px] px-[8px]"
 			>
 				{stack.title}
 				<AiOutlineFullscreen onClick={() => setShowStack(!showStack)} />
