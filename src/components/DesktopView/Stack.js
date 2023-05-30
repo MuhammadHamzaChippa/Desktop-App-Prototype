@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { AiOutlineFullscreen } from "react-icons/ai";
 import { useDraggable } from "@dnd-kit/core";
+import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import Card from "./Card";
 const Stack = ({ stack }) => {
 	const [showStack, setShowStack] = useState(false);
 	const { attributes, listeners, isDragging, setNodeRef, transform } = useDraggable({
@@ -33,28 +35,21 @@ const Stack = ({ stack }) => {
 					opacity: showStack ? 1 : 0,
 				}}
 			>
-				{stack.cards
-					.slice(0)
-					.reverse()
-					.map((card, index) => {
-						return (
-							<motion.div
-								whileHover={{
-									y: -5,
-									transition: { duration: 0.3 },
-								}}
-								style={{
-									position: "relative",
-									zIndex: index,
-									marginLeft: 12 * (stack.cards.length - index),
-								}}
-								key={card}
-								className="bg-[white] border-solid border-[2px] border-[#29AAE1] w-[176px] h-[100px] rounded-[8px] mt-[-88px] flex items-center justify-center"
-							>
-								{card}
-							</motion.div>
-						);
-					})}
+				<SortableContext items={stack.cards} strategy={verticalListSortingStrategy}>
+					{stack.cards
+						.slice(0)
+						.reverse()
+						.map((card, index) => {
+							return (
+								<Card
+									key={card}
+									card={card}
+									index={stack.cards.length - index}
+									zIndex={index}
+								/>
+							);
+						})}
+				</SortableContext>
 			</motion.div>
 			<div
 				{...attributes}
