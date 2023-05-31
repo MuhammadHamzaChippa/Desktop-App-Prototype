@@ -2,11 +2,10 @@ import React from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { motion } from "framer-motion";
-import { useRecoilState } from "recoil";
 import { selectedCardsState } from "./store";
-const Card = ({ card, index, zIndex }) => {
-	const [selectedCards, setSelectedCards] = useRecoilState(selectedCardsState);
-
+import { useRecoilValue } from "recoil";
+const Card = ({ card, index, zIndex, handleSelect }) => {
+	const selectedCards = useRecoilValue(selectedCardsState);
 	const { setNodeRef, attributes, listeners, transition, transform, isDragging } = useSortable({
 		id: card,
 		data: {
@@ -24,10 +23,12 @@ const Card = ({ card, index, zIndex }) => {
 	return (
 		<div ref={setNodeRef} {...attributes} {...listeners} style={style}>
 			<motion.div
+				onClick={() => handleSelect(card)}
 				whileHover={{
 					y: -5,
 					transition: { duration: 0.3 },
 				}}
+				animate={{ x: selectedCards.includes(card) && !isDragging ? 20 : 0 }}
 				style={
 					{
 						// marginTop: -88 ,

@@ -15,6 +15,7 @@ import { restrictToParentElement } from "@dnd-kit/modifiers";
 import { selectedCardsState } from "./store";
 import { useRecoilState } from "recoil";
 import { arrayMove } from "@dnd-kit/sortable";
+import { createPortal } from "react-dom";
 
 const DesktopView = () => {
 	const [stacks, setStacks] = useState(stack);
@@ -34,18 +35,32 @@ const DesktopView = () => {
 		return Object.keys(stacks).find((key) => stacks[key].cards.includes(id));
 	};
 
+	const handleSelect = (id) => {
+		setSelectedCards((selectedIds) => {
+			if (selectedCards.includes(id)) {
+				return selectedCards.filter((value) => value !== id);
+			}
+
+			if (!selectedCards.length || findContainer(id) !== findContainer(selectedIds[0])) {
+				return [id];
+			}
+
+			return selectedCards.concat(id);
+		});
+	};
+
 	const initialContainer = useMemo(
 		() => (activeCard ? findContainer(activeCard) : null),
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[activeCard]
 	);
 
-	function filterItems(stacks) {
+	function filterItems(stack) {
 		if (!activeCard) {
-			return stacks;
+			return stack.cards
 		}
 
-		return stacks.cards.filter((id) => id === activeCard || !selectedCards.includes(id));
+		return stack.cards.filter((id) => id === activeCard || !selectedCards.includes(id));
 	}
 
 	const onDragStart = (result) => {
@@ -176,7 +191,7 @@ const DesktopView = () => {
 					},
 				}));
 			}
-
+			setSelectedCards([]);
 			setActiveCard(null);
 		}
 	};
@@ -192,13 +207,21 @@ const DesktopView = () => {
 			<DroppableBoard>
 				{Object.keys(stacks).map((s) => {
 					const stack = stacks[s];
-					return <Stack key={stack.title} stack={stack} />;
+					return (
+						<Stack
+							key={stack.title}
+							stack={stack}
+							handleSelect={handleSelect}
+							cards={filterItems(stack)}
+						/>
+					);
 				})}
 			</DroppableBoard>
+			{}
 			<DragOverlay>
 				{activeCard && (
-					<div className="bg-[white] border-solid border-[2px] border-[#29AAE1] w-[176px] h-[100px] rounded-[8px] flex items-center justify-center">
-						{activeCard}
+					<div className="bg-[white] border-solid border-[2px] border-[black] w-[176px] h-[100px] rounded-[8px] flex items-center justify-center">
+						<span>{activeCard}</span>
 					</div>
 				)}
 			</DragOverlay>
