@@ -52,8 +52,14 @@ const DesktopView = () => {
 
 	const draggingZindex = (overId) => {
 		const container = findContainer(overId);
-		const zIndex = stacks[container]?.cards?.indexOf(overId);
-		return zIndex;
+		const cards = stacks[container]?.cards;
+		const zIndex = cards?.indexOf(overId);
+		console.log(zIndex, cards?.length);
+		if (zIndex === cards?.length - 1) {
+			return zIndex + 2;
+		} else {
+			return zIndex;
+		}
 	};
 
 	const handleSelect = (id) => {
