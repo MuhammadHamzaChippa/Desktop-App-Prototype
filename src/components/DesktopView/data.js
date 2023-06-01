@@ -1,5 +1,28 @@
-export const stack = {
-	Stack1: { title: "Stack1", x: 50, y: 200, cards: ["S1-Card1", "S1-Card2", "S1-Card3"] },
-	Stack2: { title: "Stack2", x: 500, y: 500, cards: ["S2-Card1", "S2-Card2", "S2-Card3"] },
-	Stack3: { title: "Stack3", x: 1000, y: 200, cards: ["S3-Card1", "S3-Card2", "S3-Card3"] },
-};
+// Helper function to generate a random number within a range
+function getRandomNumber(min, max) {
+	return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+// Helper function to generate an array of cards
+function generateCards(stackName, numCards) {
+	const cards = [];
+	for (let i = 1; i <= numCards; i++) {
+		cards.push(`${stackName}-Card${i}`);
+	}
+	return cards;
+}
+
+// Generate 100 stacks
+export const stack = {};
+for (let i = 1; i <= 30; i++) {
+	const stackKey = `Stack${i}`;
+	stack[stackKey] = {
+		title: stackKey,
+		x: getRandomNumber(0, window.innerWidth - 200),
+		y: getRandomNumber(0, window.innerHeight - 200),
+		cards: generateCards(stackKey, 3),
+	};
+}
+
+// Print the generated stack
+console.log(stack);

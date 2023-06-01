@@ -13,6 +13,7 @@ const Stack = ({ stack, handleSelect, cards, draggingZindex }) => {
 
 	const { setNodeRef: dropRef } = useDroppable({
 		id: stack.title,
+		disabled: !showStack,
 	});
 
 	function getStyles(left, top, transform) {

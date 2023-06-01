@@ -58,7 +58,7 @@ const DesktopView = () => {
 		if (zIndex === cards?.length - 1) {
 			return zIndex + 2;
 		} else {
-			return zIndex;
+			return zIndex ;
 		}
 	};
 
