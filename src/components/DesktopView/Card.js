@@ -2,10 +2,11 @@ import React from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { motion } from "framer-motion";
-import { selectedCardsState } from "./store";
+import { selectedCardsState, overIdState } from "./store";
 import { useRecoilValue } from "recoil";
-const Card = ({ card, index, zIndex, handleSelect }) => {
+const Card = ({ card, index, zIndex, handleSelect, draggingZindex }) => {
 	const selectedCards = useRecoilValue(selectedCardsState);
+	const overId = useRecoilValue(overIdState);
 	const { setNodeRef, attributes, listeners, transition, transform, isDragging } = useSortable({
 		id: card,
 		data: {
@@ -13,11 +14,13 @@ const Card = ({ card, index, zIndex, handleSelect }) => {
 		},
 	});
 
+	const cardZindex = isDragging ? draggingZindex(overId) : zIndex;
+
 	const style = {
 		position: "relative",
 		transition,
 		transform: CSS.Transform.toString(transform),
-		opacity: isDragging ? 0.5 : 1,
+		zIndex: cardZindex,
 	};
 
 	return (
@@ -31,14 +34,15 @@ const Card = ({ card, index, zIndex, handleSelect }) => {
 				animate={{ x: selectedCards.includes(card) && !isDragging ? 20 : 0 }}
 				style={
 					{
-						// marginTop: -88 ,
-						// marginLeft: 12 * index,
+						marginTop: -88,
+						marginLeft: 12 * index,
 					}
 				}
 				key={card}
 				className="bg-[white] border-solid border-[2px] border-[#29AAE1] w-[176px] h-[100px] rounded-[8px] flex items-center justify-center"
 			>
-				{card}
+				{card} <br />
+				{cardZindex}
 			</motion.div>
 		</div>
 	);

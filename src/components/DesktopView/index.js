@@ -10,17 +10,32 @@ import {
 	TouchSensor,
 	useSensor,
 	useSensors,
+	useDndContext,
 } from "@dnd-kit/core";
-import { restrictToParentElement } from "@dnd-kit/modifiers";
-import { selectedCardsState } from "./store";
+import { selectedCardsState, overIdState } from "./store";
 import { useRecoilState } from "recoil";
 import { arrayMove } from "@dnd-kit/sortable";
-import { createPortal } from "react-dom";
+import Card from "./Card";
 
+const CardOverlay = ({ card, stacks }) => {
+	const { over } = useDndContext();
+	const findContainer = (id) => {
+		if (id in stacks) {
+			return id;
+		}
+
+		return Object.keys(stacks).find((key) => stacks[key].cards.includes(id));
+	};
+	const container = findContainer(over?.id);
+	const zIndex = stacks[container]?.cards?.indexOf(over?.id);
+
+	return <Card card={card} zIndex={-5} />;
+};
 const DesktopView = () => {
 	const [stacks, setStacks] = useState(stack);
 	const [activeCard, setActiveCard] = useState(null);
 	const [selectedCards, setSelectedCards] = useRecoilState(selectedCardsState);
+	const [overId, setOverId] = useRecoilState(overIdState);
 	const sensors = useSensors(
 		useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
 		useSensor(TouchSensor, {}),
@@ -33,6 +48,12 @@ const DesktopView = () => {
 		}
 
 		return Object.keys(stacks).find((key) => stacks[key].cards.includes(id));
+	};
+
+	const draggingZindex = (overId) => {
+		const container = findContainer(overId);
+		const zIndex = stacks[container]?.cards?.indexOf(overId);
+		return zIndex;
 	};
 
 	const handleSelect = (id) => {
@@ -57,7 +78,7 @@ const DesktopView = () => {
 
 	function filterItems(stack) {
 		if (!activeCard) {
-			return stack.cards
+			return stack.cards;
 		}
 
 		return stack.cards.filter((id) => id === activeCard || !selectedCards.includes(id));
@@ -80,6 +101,7 @@ const DesktopView = () => {
 			if (!overId || active.id in stacks) {
 				return;
 			}
+			setOverId(overId);
 			const overStack = findContainer(overId);
 			const activeStack = findContainer(active.id);
 
@@ -212,18 +234,15 @@ const DesktopView = () => {
 							stack={stack}
 							handleSelect={handleSelect}
 							cards={filterItems(stack)}
+							draggingZindex={draggingZindex}
 						/>
 					);
 				})}
 			</DroppableBoard>
 			{}
-			<DragOverlay>
-				{activeCard && (
-					<div className="bg-[white] border-solid border-[2px] border-[black] w-[176px] h-[100px] rounded-[8px] flex items-center justify-center">
-						<span>{activeCard}</span>
-					</div>
-				)}
-			</DragOverlay>
+			{/* <DragOverlay>
+				{activeCard && <CardOverlay card={activeCard} stacks={stacks} />}
+			</DragOverlay> */}
 		</DndContext>
 	);
 };
