@@ -13,7 +13,7 @@ function generateCards(stackName, numCards) {
 }
 
 // Generate 100 stacks
-export const stack = {};
+export const stack = { };
 for (let i = 1; i <= 3; i++) {
 	const stackKey = `Stack${i}`;
 	stack[stackKey] = {
