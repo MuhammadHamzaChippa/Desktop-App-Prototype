@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { AiOutlineFullscreen } from "react-icons/ai";
-import { useDraggable } from "@dnd-kit/core";
+import { useDraggable, useDroppable } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import Card from "./Card";
 const Stack = ({ stack, handleSelect, cards }) => {
@@ -9,6 +9,10 @@ const Stack = ({ stack, handleSelect, cards }) => {
 	const { attributes, listeners, isDragging, setNodeRef, transform } = useDraggable({
 		id: stack.title,
 		data: { type: "stack" },
+	});
+
+	const { setNodeRef: dropRef } = useDroppable({
+		id: stack.title,
 	});
 
 	function getStyles(left, top, transform) {
@@ -36,20 +40,22 @@ const Stack = ({ stack, handleSelect, cards }) => {
 				}}
 			>
 				<SortableContext items={stack.cards} strategy={verticalListSortingStrategy}>
-					{cards
-						// .slice(0)
-						// .reverse()
-						.map((card, index) => {
-							return (
-								<Card
-									key={card}
-									card={card}
-									index={stack.cards.length - index}
-									zIndex={index}
-									handleSelect={handleSelect}
-								/>
-							);
-						})}
+					<div ref={dropRef} className={`${stack.cards.length === 0 ? "py-[20px]" : ""}`}>
+						{cards
+							// .slice(0)
+							// .reverse()
+							.map((card, index) => {
+								return (
+									<Card
+										key={card}
+										card={card}
+										index={stack.cards.length - index}
+										zIndex={index}
+										handleSelect={handleSelect}
+									/>
+								);
+							})}
+					</div>
 				</SortableContext>
 			</motion.div>
 			<div

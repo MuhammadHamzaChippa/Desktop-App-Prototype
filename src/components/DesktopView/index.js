@@ -198,7 +198,6 @@ const DesktopView = () => {
 
 	return (
 		<DndContext
-			modifiers={[restrictToParentElement]}
 			onDragStart={onDragStart}
 			onDragOver={onDragOver}
 			onDragEnd={onDragEnd}
