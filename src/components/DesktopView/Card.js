@@ -28,16 +28,14 @@ const Card = ({ card, index, zIndex, handleSelect, draggingZindex }) => {
 			<motion.div
 				onClick={() => handleSelect(card)}
 				whileHover={{
-					y: -5,
+					y: -10,
 					transition: { duration: 0.3 },
 				}}
 				animate={{ x: selectedCards.includes(card) && !isDragging ? 20 : 0 }}
-				style={
-					{
-						marginTop: -88,
-						marginLeft: 12 * index,
-					}
-				}
+				style={{
+					marginTop: -88,
+					marginLeft: 12 * index,
+				}}
 				key={card}
 				className="bg-[white] border-solid border-[2px] border-[#29AAE1] w-[176px] h-[100px] rounded-[8px] flex items-center justify-center"
 			>

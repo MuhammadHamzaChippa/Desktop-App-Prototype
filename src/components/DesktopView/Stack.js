@@ -41,7 +41,7 @@ const Stack = ({ stack, handleSelect, cards, draggingZindex }) => {
 				}}
 			>
 				<SortableContext items={stack.cards} strategy={verticalListSortingStrategy}>
-					<div ref={dropRef} className={`${stack.cards.length === 0 ? "py-[20px]" : ""}`}>
+					<div ref={dropRef} className={`${stack.cards.length === 0 ? "py-[20px]" : ""} flex flex-col gap-[5px]`}>
 						{cards
 							// .slice(0)
 							// .reverse()
