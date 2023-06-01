@@ -14,7 +14,7 @@ const Card = ({ card, index, zIndex, handleSelect, draggingZindex }) => {
 		},
 	});
 
-	const cardZindex = isDragging ? draggingZindex(overId) : zIndex;
+	const cardZindex = isDragging ? draggingZindex(overId) : zIndex + 1;
 
 	const style = {
 		position: "relative",
