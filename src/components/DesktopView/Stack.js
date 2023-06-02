@@ -19,6 +19,7 @@ const Stack = ({ stack, handleSelect, cards, draggingZindex }) => {
 		return {
 			cursor: "grab",
 			position: "absolute",
+			zIndex: isDragging ? 999 : 1,
 			"--top": `${top}px`,
 			"--left": `${left}px`,
 			"--translate-x": `${transform?.x ?? 0}px`,
