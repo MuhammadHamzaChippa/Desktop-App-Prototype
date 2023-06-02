@@ -7,13 +7,13 @@ function getRandomNumber(min, max) {
 function generateCards(stackName, numCards) {
 	const cards = [];
 	for (let i = 1; i <= numCards; i++) {
-		cards.push(`${stackName}-Card${i}`);
+		cards.push({ title: `${stackName}-Card${i}`, x: 0, y: 0 });
 	}
 	return cards;
 }
 
 // Generate 100 stacks
-export const stack = { };
+export const stack = {};
 for (let i = 1; i <= 3; i++) {
 	const stackKey = `Stack${i}`;
 	stack[stackKey] = {

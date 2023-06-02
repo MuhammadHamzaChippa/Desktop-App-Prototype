@@ -40,7 +40,7 @@ const Stack = ({ stack, handleSelect, cards, draggingZindex }) => {
 					opacity: showStack ? 1 : 0,
 				}}
 			>
-				<SortableContext items={stack.cards} strategy={verticalListSortingStrategy}>
+				<SortableContext items={stack.cards.map((card) => card.title)} strategy={verticalListSortingStrategy}>
 					<div
 						ref={dropRef}
 						className={`${
@@ -53,7 +53,7 @@ const Stack = ({ stack, handleSelect, cards, draggingZindex }) => {
 							.map((card, index) => {
 								return (
 									<Card
-										key={card}
+										key={card.title}
 										card={card}
 										index={stack.cards.length - index}
 										zIndex={index}

@@ -7,7 +7,7 @@ import { useRecoilValue } from "recoil";
 const Card = ({ card, index, zIndex, handleSelect, draggingZindex }) => {
 	const selectedCards = useRecoilValue(selectedCardsState);
 	const { setNodeRef, attributes, listeners, transition, transform, isDragging } = useSortable({
-		id: card,
+		id: card.title,
 		data: {
 			type: "card",
 		},
@@ -25,21 +25,20 @@ const Card = ({ card, index, zIndex, handleSelect, draggingZindex }) => {
 	return (
 		<div ref={setNodeRef} {...attributes} {...listeners} style={style}>
 			<motion.div
-				onClick={() => handleSelect(card)}
+				onClick={() => handleSelect(card.title)}
 				whileHover={{
 					y: -10,
 					transition: { duration: 0.3 },
 				}}
-				animate={{ x: selectedCards.includes(card) && !isDragging ? 20 : 0 }}
+				animate={{ x: selectedCards.includes(card.title) && !isDragging ? 20 : 0 }}
 				style={{
-					marginTop: -88,
-					marginLeft: 12 * index,
+					// marginTop: -88,
+					// marginLeft: 12 * index,
 				}}
 				key={card}
 				className="bg-[white] border-solid border-[2px] border-[#29AAE1] w-[176px] h-[100px] rounded-[8px] flex items-center justify-center"
 			>
-				{card} <br />
-				{cardZindex}
+				{card.title} <br />
 			</motion.div>
 		</div>
 	);
