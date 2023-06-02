@@ -4,38 +4,22 @@ import Stack from "./Stack";
 import DroppableBoard from "./DroppableBoard";
 import {
 	DndContext,
-	DragOverlay,
 	KeyboardSensor,
 	PointerSensor,
 	TouchSensor,
+	closestCenter,
 	useSensor,
 	useSensors,
-	useDndContext,
 } from "@dnd-kit/core";
-import { selectedCardsState, overIdState } from "./store";
+import { selectedCardsState, draggingIdsState } from "./store";
 import { useRecoilState } from "recoil";
 import { arrayMove } from "@dnd-kit/sortable";
-import Card from "./Card";
 
-const CardOverlay = ({ card, stacks }) => {
-	const { over } = useDndContext();
-	const findContainer = (id) => {
-		if (id in stacks) {
-			return id;
-		}
-
-		return Object.keys(stacks).find((key) => stacks[key].cards.includes(id));
-	};
-	const container = findContainer(over?.id);
-	const zIndex = stacks[container]?.cards?.indexOf(over?.id);
-
-	return <Card card={card} zIndex={-5} />;
-};
 const DesktopView = () => {
 	const [stacks, setStacks] = useState(stack);
 	const [activeCard, setActiveCard] = useState(null);
 	const [selectedCards, setSelectedCards] = useRecoilState(selectedCardsState);
-	const [overId, setOverId] = useRecoilState(overIdState);
+	const [draggingId, setDraggingId] = useRecoilState(draggingIdsState);
 	const sensors = useSensors(
 		useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
 		useSensor(TouchSensor, {}),
@@ -50,17 +34,24 @@ const DesktopView = () => {
 		return Object.keys(stacks).find((key) => stacks[key].cards.includes(id));
 	};
 
-	const draggingZindex = (overId) => {
-		const container = findContainer(overId);
-		const cards = stacks[container]?.cards;
-		const zIndex = cards?.indexOf(overId);
-		console.log(zIndex, cards?.length);
+	const draggingZindex = () => {
+		const { overId, activeId } = draggingId;
+		const overContainer = findContainer(overId);
+		const activeContainer = findContainer(activeId);
+		const overCards = stacks[overContainer]?.cards;
+		const activeCards = stacks[activeContainer]?.cards;
+		const activeIndex = activeCards?.findIndex((card) => card === activeId);
+		const overIndex = overCards?.findIndex((card) => card === overId);
 		// if (zIndex === cards?.length - 1) {
 		// 	return zIndex + 2;
 		// } else {
 		// 	return zIndex + 1;
 		// }
-		return zIndex + 2;
+		if (activeIndex > overIndex) {
+			return overIndex;
+		} else {
+			return overIndex + 2;
+		}
 	};
 
 	const handleSelect = (id) => {
@@ -108,7 +99,7 @@ const DesktopView = () => {
 			if (!overId || active.id in stacks) {
 				return;
 			}
-			setOverId(overId);
+			setDraggingId({ overId: overId, activeId: active.id });
 			const overStack = findContainer(overId);
 			const activeStack = findContainer(active.id);
 
@@ -246,10 +237,6 @@ const DesktopView = () => {
 					);
 				})}
 			</DroppableBoard>
-			{}
-			{/* <DragOverlay>
-				{activeCard && <CardOverlay card={activeCard} stacks={stacks} />}
-			</DragOverlay> */}
 		</DndContext>
 	);
 };

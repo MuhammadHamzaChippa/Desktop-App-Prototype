@@ -6,7 +6,6 @@ import { selectedCardsState, overIdState } from "./store";
 import { useRecoilValue } from "recoil";
 const Card = ({ card, index, zIndex, handleSelect, draggingZindex }) => {
 	const selectedCards = useRecoilValue(selectedCardsState);
-	const overId = useRecoilValue(overIdState);
 	const { setNodeRef, attributes, listeners, transition, transform, isDragging } = useSortable({
 		id: card,
 		data: {
@@ -14,7 +13,7 @@ const Card = ({ card, index, zIndex, handleSelect, draggingZindex }) => {
 		},
 	});
 
-	const cardZindex = isDragging ? draggingZindex(overId) : zIndex + 1;
+	const cardZindex = isDragging ? draggingZindex() : zIndex + 1;
 
 	const style = {
 		position: "relative",

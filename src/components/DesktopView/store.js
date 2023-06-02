@@ -5,7 +5,8 @@ export const selectedCardsState = atom({
 	default: [],
 });
 
-export const overIdState = atom({
-	key: "overId",
-	default: "",
+export const draggingIdsState = atom({
+	key: "draggingIdsState",
+	default: {},
 });
+
