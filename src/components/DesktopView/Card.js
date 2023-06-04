@@ -36,8 +36,8 @@ const Card = ({ card, index, zIndex, handleSelect }) => {
 				}}
 				animate={{ x: selectedCards.includes(card.title) && !isDragging ? 20 : 0 }}
 				style={{
-					marginTop: -88,
-					marginLeft: 12 * index,
+					// marginTop: -88,
+					// marginLeft: 12 * index,
 					background: over?.id === "desktop" && isDragging ? "pink" : "white",
 				}}
 				key={card}

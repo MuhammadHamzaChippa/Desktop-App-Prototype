@@ -64,7 +64,7 @@ const DesktopView = () => {
 		}
 
 		return stack.cards.filter(
-			(card) => card.title === activeCard || !selectedCards.includes(card.title)
+			(card) => card.title === activeCard.title || !selectedCards.includes(card.title)
 		);
 	}
 
