@@ -172,6 +172,7 @@ const DesktopView = () => {
 			const overContainer = findContainer(overId);
 
 			if (overContainer) {
+				console.log(ids);
 				const overItems = filterItems(stacks[overContainer]);
 				const overIndex = overItems.findIndex((card) => card.title === overId);
 				const activeIndex = overItems.findIndex((card) => card.title === active.id);
@@ -205,6 +206,11 @@ const DesktopView = () => {
 						...newItems.slice(newActiveIndex + 1, newItems.length),
 					],
 				};
+
+				console.log("intialstack", initalStack);
+				console.log("activeStack", activeStack);
+				console.log("overStack", overStack);
+				console.log("cards", cards);
 
 				setStacks((items) => ({
 					...items,
