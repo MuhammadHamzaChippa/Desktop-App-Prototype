@@ -24,5 +24,3 @@ for (let i = 1; i <= 3; i++) {
 	};
 }
 
-// Print the generated stack
-console.log(stack);

@@ -24,7 +24,6 @@ const Card = ({ card, index, zIndex, handleSelect }) => {
 		transition,
 		transform: CSS.Transform.toString(transform),
 		zIndex: cardZindex,
-		opacity: isDragging && over?.id === "desktop" ? 0 : 1,
 	};
 
 	return (
@@ -36,14 +35,13 @@ const Card = ({ card, index, zIndex, handleSelect }) => {
 					transition: { duration: 0.3 },
 				}}
 				animate={{ x: selectedCards.includes(card.title) && !isDragging ? 20 : 0 }}
-				style={
-					{
-						marginTop: -88,
-						marginLeft: 12 * index,
-					}
-				}
+				style={{
+					marginTop: -88,
+					marginLeft: 12 * index,
+					background: over?.id === "desktop" && isDragging ? "pink" : "white",
+				}}
 				key={card}
-				className="bg-[white] border-solid border-[2px] border-[#29AAE1] w-[176px] h-[100px] rounded-[8px] flex items-center justify-center"
+				className="border-solid border-[2px] border-[#29AAE1] w-[176px] h-[100px] rounded-[8px] flex items-center justify-center"
 			>
 				{card.title} <br />
 				{cardZindex}

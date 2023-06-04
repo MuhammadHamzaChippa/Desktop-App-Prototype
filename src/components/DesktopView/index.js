@@ -15,8 +15,10 @@ import { selectedCardsState, stacksState } from "./store";
 import { useRecoilState } from "recoil";
 import { arrayMove } from "@dnd-kit/sortable";
 import CardOverlay from "./CardOverlay";
+import FreeCard from "./FreeCard";
 
 const DesktopView = () => {
+	const [freeCards, setFreeCards] = useState([{ title: "FreeCard", x: 50, y: 20 }]);
 	const [stacks, setStacks] = useRecoilState(stacksState);
 	const [activeCard, setActiveCard] = useState(null);
 	const [selectedCards, setSelectedCards] = useRecoilState(selectedCardsState);
@@ -79,6 +81,7 @@ const DesktopView = () => {
 
 	const onDragOver = (result) => {
 		const { active, over } = result;
+		console.log(active, over);
 		if (active.data.current.type === "card") {
 			const overId = over?.id;
 			if (!overId || active.id in stacks) {
@@ -193,7 +196,6 @@ const DesktopView = () => {
 				const allCards = Object.values(stacks)
 					.map((stack) => stack.cards)
 					.flat();
-				console.log(allCards);
 
 				const overStack = {
 					...stacks[overContainer],
@@ -235,6 +237,7 @@ const DesktopView = () => {
 						/>
 					);
 				})}
+				{freeCards.length > 0 && <FreeCard card={freeCards[0]} />}
 			</DroppableBoard>
 		</DndContext>
 	);

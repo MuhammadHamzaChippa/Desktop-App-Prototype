@@ -28,9 +28,9 @@ const useZindex = () => {
 	// 	return zIndex + 1;
 	// }
 	if (activeIndex > overIndex) {
-		return overIndex;
+		return overIndex || 0;
 	} else {
-		return overIndex + 2;
+		return overIndex + 2 || 999;
 	}
 };
 
