@@ -11,15 +11,16 @@ import {
 	useSensor,
 	useSensors,
 } from "@dnd-kit/core";
-import { selectedCardsState, draggingIdsState } from "./store";
+import { selectedCardsState, stacksState } from "./store";
 import { useRecoilState } from "recoil";
 import { arrayMove } from "@dnd-kit/sortable";
 
+
+
 const DesktopView = () => {
-	const [stacks, setStacks] = useState(stack);
+	const [stacks, setStacks] = useRecoilState(stacksState);
 	const [activeCard, setActiveCard] = useState(null);
 	const [selectedCards, setSelectedCards] = useRecoilState(selectedCardsState);
-	const [draggingId, setDraggingId] = useRecoilState(draggingIdsState);
 	const sensors = useSensors(
 		useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
 		useSensor(TouchSensor, {}),
@@ -34,26 +35,6 @@ const DesktopView = () => {
 		return Object.keys(stacks).find((key) =>
 			stacks[key].cards.map((card) => card.title).includes(id)
 		);
-	};
-
-	const draggingZindex = () => {
-		const { overId, activeId } = draggingId;
-		const overContainer = findContainer(overId);
-		const activeContainer = findContainer(activeId);
-		const overCards = stacks[overContainer]?.cards;
-		const activeCards = stacks[activeContainer]?.cards;
-		const activeIndex = activeCards?.findIndex((card) => card.title === activeId);
-		const overIndex = overCards?.findIndex((card) => card.title === overId);
-		// if (zIndex === cards?.length - 1) {
-		// 	return zIndex + 2;
-		// } else {
-		// 	return zIndex + 1;
-		// }
-		if (activeIndex > overIndex) {
-			return overIndex;
-		} else {
-			return overIndex + 2;
-		}
 	};
 
 	const handleSelect = (id) => {
@@ -103,7 +84,6 @@ const DesktopView = () => {
 			if (!overId || active.id in stacks) {
 				return;
 			}
-			setDraggingId({ overId: overId, activeId: active.id });
 			const overStack = findContainer(overId);
 			const activeStack = findContainer(active.id);
 
@@ -252,7 +232,6 @@ const DesktopView = () => {
 							stack={stack}
 							handleSelect={handleSelect}
 							cards={filterItems(stack)}
-							draggingZindex={draggingZindex}
 						/>
 					);
 				})}

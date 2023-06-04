@@ -2,9 +2,11 @@ import React from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { motion } from "framer-motion";
-import { selectedCardsState, overIdState } from "./store";
+import { selectedCardsState } from "./store";
 import { useRecoilValue } from "recoil";
-const Card = ({ card, index, zIndex, handleSelect, draggingZindex }) => {
+import useZindex from "./useZindex";
+const Card = ({ card, index, zIndex, handleSelect }) => {
+	const draggingZindex = useZindex();
 	const selectedCards = useRecoilValue(selectedCardsState);
 	const { setNodeRef, attributes, listeners, transition, transform, isDragging } = useSortable({
 		id: card.title,
@@ -13,7 +15,7 @@ const Card = ({ card, index, zIndex, handleSelect, draggingZindex }) => {
 		},
 	});
 
-	const cardZindex = isDragging ? draggingZindex() : zIndex + 1;
+	const cardZindex = isDragging ? draggingZindex : zIndex + 1;
 
 	const style = {
 		position: "relative",
@@ -27,18 +29,21 @@ const Card = ({ card, index, zIndex, handleSelect, draggingZindex }) => {
 			<motion.div
 				onClick={() => handleSelect(card.title)}
 				whileHover={{
-					y: -10,
+					y: index !== 1 ? -10 : 0,
 					transition: { duration: 0.3 },
 				}}
 				animate={{ x: selectedCards.includes(card.title) && !isDragging ? 20 : 0 }}
-				style={{
-					// marginTop: -88,
-					// marginLeft: 12 * index,
-				}}
+				style={
+					{
+						// marginTop: -88,
+						// marginLeft: 12 * index,
+					}
+				}
 				key={card}
 				className="bg-[white] border-solid border-[2px] border-[#29AAE1] w-[176px] h-[100px] rounded-[8px] flex items-center justify-center"
 			>
 				{card.title} <br />
+				{cardZindex}
 			</motion.div>
 		</div>
 	);

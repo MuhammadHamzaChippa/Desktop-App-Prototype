@@ -4,7 +4,7 @@ import { AiOutlineFullscreen } from "react-icons/ai";
 import { useDraggable, useDroppable } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import Card from "./Card";
-const Stack = ({ stack, handleSelect, cards, draggingZindex }) => {
+const Stack = ({ stack, handleSelect, cards }) => {
 	const [showStack, setShowStack] = useState(false);
 	const { attributes, listeners, isDragging, setNodeRef, transform } = useDraggable({
 		id: stack.title,
@@ -44,8 +44,8 @@ const Stack = ({ stack, handleSelect, cards, draggingZindex }) => {
 					<div
 						ref={dropRef}
 						className={`${
-							stack.cards.length === 0 ? "py-[20px]" : ""
-						} flex flex-col gap-[5px]`}
+							stack.cards.length === 0 ? "" : ""
+						} flex flex-col bg-[red] pt-[20px]`}
 					>
 						{cards
 							// .slice(0)
@@ -58,7 +58,6 @@ const Stack = ({ stack, handleSelect, cards, draggingZindex }) => {
 										index={stack.cards.length - index}
 										zIndex={index}
 										handleSelect={handleSelect}
-										draggingZindex={draggingZindex}
 									/>
 								);
 							})}
