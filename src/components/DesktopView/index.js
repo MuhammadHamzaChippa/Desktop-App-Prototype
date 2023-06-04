@@ -235,7 +235,6 @@ const DesktopView = () => {
 						/>
 					);
 				})}
-				<CardOverlay card={activeCard} />
 			</DroppableBoard>
 		</DndContext>
 	);
