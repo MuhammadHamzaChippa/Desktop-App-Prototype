@@ -1,4 +1,5 @@
 import React from "react";
+import { useDndContext } from "@dnd-kit/core";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { motion } from "framer-motion";
@@ -6,6 +7,7 @@ import { selectedCardsState } from "./store";
 import { useRecoilValue } from "recoil";
 import useZindex from "./useZindex";
 const Card = ({ card, index, zIndex, handleSelect }) => {
+	const { over } = useDndContext();
 	const draggingZindex = useZindex();
 	const selectedCards = useRecoilValue(selectedCardsState);
 	const { setNodeRef, attributes, listeners, transition, transform, isDragging } = useSortable({
@@ -22,6 +24,7 @@ const Card = ({ card, index, zIndex, handleSelect }) => {
 		transition,
 		transform: CSS.Transform.toString(transform),
 		zIndex: cardZindex,
+		opacity: isDragging && over?.id === "desktop" ? 0 : 1,
 	};
 
 	return (

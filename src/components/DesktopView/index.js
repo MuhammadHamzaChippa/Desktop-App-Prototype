@@ -14,8 +14,7 @@ import {
 import { selectedCardsState, stacksState } from "./store";
 import { useRecoilState } from "recoil";
 import { arrayMove } from "@dnd-kit/sortable";
-
-
+import CardOverlay from "./CardOverlay";
 
 const DesktopView = () => {
 	const [stacks, setStacks] = useRecoilState(stacksState);
@@ -52,7 +51,7 @@ const DesktopView = () => {
 	};
 
 	const initialContainer = useMemo(
-		() => (activeCard ? findContainer(activeCard) : null),
+		() => (activeCard ? findContainer(activeCard.title) : null),
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[activeCard]
 	);
@@ -73,7 +72,8 @@ const DesktopView = () => {
 			setSelectedCards((selectedCard) =>
 				selectedCard.includes(active.id) ? selectedCard : []
 			);
-			setActiveCard(active.id);
+			const activeStack = findContainer(active.id);
+			setActiveCard(stacks[activeStack].cards.find((card) => card.title === active.id));
 		}
 	};
 
@@ -235,6 +235,7 @@ const DesktopView = () => {
 						/>
 					);
 				})}
+				<CardOverlay card={activeCard} />
 			</DroppableBoard>
 		</DndContext>
 	);
