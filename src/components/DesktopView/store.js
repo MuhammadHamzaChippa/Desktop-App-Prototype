@@ -10,3 +10,8 @@ export const stacksState = atom({
 	key: "stacks",
 	default: stack,
 });
+
+export const isDraggingState = atom({
+	key: "isDragging",
+	default: false,
+});

@@ -1,5 +1,4 @@
-import React, { useState, useMemo } from "react";
-import { stack } from "./data";
+import React, { useState, useMemo, useEffect } from "react";
 import Stack from "./Stack";
 import DroppableBoard from "./DroppableBoard";
 import {
@@ -7,18 +6,29 @@ import {
 	KeyboardSensor,
 	PointerSensor,
 	TouchSensor,
-	closestCenter,
+	rectIntersection,
 	useSensor,
 	useSensors,
 } from "@dnd-kit/core";
-import { selectedCardsState, stacksState } from "./store";
-import { useRecoilState } from "recoil";
+import { selectedCardsState, stacksState, isDraggingState } from "./store";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { arrayMove } from "@dnd-kit/sortable";
 import CardOverlay from "./CardOverlay";
-import FreeCard from "./FreeCard";
-
+import { stack } from "./data";
 const DesktopView = () => {
-	const [freeCards, setFreeCards] = useState([{ title: "FreeCard", x: 50, y: 20 }]);
+	const [mousePosition, setMousePosition] = useState({ x: null, y: null });
+
+	useEffect(() => {
+		const updateMousePosition = (ev) => {
+			setMousePosition({ x: ev.clientX, y: ev.clientY });
+		};
+		window.addEventListener("mousemove", updateMousePosition);
+		return () => {
+			window.removeEventListener("mousemove", updateMousePosition);
+		};
+	}, []);
+
+	const setDraggingFlag = useSetRecoilState(isDraggingState);
 	const [stacks, setStacks] = useRecoilState(stacksState);
 	const [activeCard, setActiveCard] = useState(null);
 	const [selectedCards, setSelectedCards] = useRecoilState(selectedCardsState);
@@ -38,17 +48,20 @@ const DesktopView = () => {
 		);
 	};
 
-	const handleSelect = (id) => {
-		setSelectedCards((selectedIds) => {
-			if (selectedCards.includes(id)) {
-				return selectedCards.filter((value) => value !== id);
+	const handleSelect = (card) => {
+		setSelectedCards((selectedCards) => {
+			if (selectedCards.includes(card)) {
+				return selectedCards.filter((value) => value.title !== card.title);
 			}
 
-			if (!selectedCards.length || findContainer(id) !== findContainer(selectedIds[0])) {
-				return [id];
+			if (
+				!selectedCards.length ||
+				findContainer(card.title) !== findContainer(selectedCards[0].title)
+			) {
+				return [card];
 			}
 
-			return selectedCards.concat(id);
+			return selectedCards.concat(card);
 		});
 	};
 
@@ -64,15 +77,18 @@ const DesktopView = () => {
 		}
 
 		return stack.cards.filter(
-			(card) => card.title === activeCard.title || !selectedCards.includes(card.title)
+			(card) =>
+				card.title === activeCard.title ||
+				!selectedCards.map((card) => card.title).includes(card.title)
 		);
 	}
 
 	const onDragStart = (result) => {
 		const { active } = result;
 		if (active.data.current.type === "card") {
+			setDraggingFlag(true);
 			setSelectedCards((selectedCard) =>
-				selectedCard.includes(active.id) ? selectedCard : []
+				selectedCard.map((card) => card.title).includes(active.id) ? selectedCard : []
 			);
 			const activeStack = findContainer(active.id);
 			setActiveCard(stacks[activeStack].cards.find((card) => card.title === active.id));
@@ -158,7 +174,27 @@ const DesktopView = () => {
 		if (active.data.current.type === "card") {
 			const activeContainer = findContainer(active.id);
 			const overId = over?.id;
+			if (overId === "desktop") {
+				const ids = selectedCards.length
+					? [activeCard, ...selectedCards.filter((card) => card.title !== active.id)]
+					: [activeCard];
 
+				const newStack = `Stack${Object.keys(stack).length + 1}`;
+				setStacks((stacks) => {
+					return {
+						...stacks,
+						[newStack]: {
+							title: newStack,
+							cards: ids,
+							x: mousePosition.x,
+							y: mousePosition.y,
+						},
+					};
+				});
+
+				setSelectedCards([]);
+				return;
+			}
 			if (!activeContainer || !overId || !initialContainer) {
 				setActiveCard(null);
 				setSelectedCards([]);
@@ -166,51 +202,40 @@ const DesktopView = () => {
 			}
 
 			const ids = selectedCards.length
-				? [active.id, ...selectedCards.filter((id) => id !== active.id)]
-				: [active.id];
+				? [activeCard, ...selectedCards.filter((card) => card.title !== active.id)]
+				: [activeCard];
 
 			const overContainer = findContainer(overId);
 
 			if (overContainer) {
-				console.log(ids);
 				const overItems = filterItems(stacks[overContainer]);
 				const overIndex = overItems.findIndex((card) => card.title === overId);
 				const activeIndex = overItems.findIndex((card) => card.title === active.id);
 				const newItems = arrayMove(overItems, activeIndex, overIndex);
-				const newActiveIndex = newItems.indexOf(active.id);
+				const newActiveIndex = newItems.findIndex((card) => card.title === active.id);
 
 				const initalStack = {
 					...stacks[initialContainer],
 					cards: stacks[initialContainer].cards.filter(
-						(card) => !ids.includes(card.title)
+						(card) => !ids.map((c) => c.title).includes(card.title)
 					),
 				};
 
 				const activeStack = {
 					...stacks[activeContainer],
 					cards: stacks[activeContainer].cards.filter(
-						(card) => !ids.includes(card.title)
+						(card) => !ids.map((c) => c.title).includes(card.title)
 					),
 				};
-
-				const cards = ids.filter((id) => id !== active.id);
-				const allCards = Object.values(stacks)
-					.map((stack) => stack.cards)
-					.flat();
 
 				const overStack = {
 					...stacks[overContainer],
 					cards: [
 						...newItems.slice(0, newActiveIndex + 1),
-						...allCards.filter((card) => cards.includes(card.title)),
+						...ids.filter((card) => card.title !== active.id),
 						...newItems.slice(newActiveIndex + 1, newItems.length),
 					],
 				};
-
-				console.log("intialstack", initalStack);
-				console.log("activeStack", activeStack);
-				console.log("overStack", overStack);
-				console.log("cards", cards);
 
 				setStacks((items) => ({
 					...items,
@@ -221,6 +246,7 @@ const DesktopView = () => {
 			}
 			setSelectedCards([]);
 			setActiveCard(null);
+			setDraggingFlag(false);
 		}
 	};
 
@@ -229,7 +255,9 @@ const DesktopView = () => {
 			onDragStart={onDragStart}
 			onDragOver={onDragOver}
 			onDragEnd={onDragEnd}
+			onDragCancel={() => setDraggingFlag(false)}
 			sensors={sensors}
+			collisionDetection={rectIntersection}
 		>
 			<DroppableBoard>
 				{Object.keys(stacks).map((s) => {
@@ -243,8 +271,8 @@ const DesktopView = () => {
 						/>
 					);
 				})}
-				{freeCards.length > 0 && <FreeCard card={freeCards[0]} />}
 			</DroppableBoard>
+			<CardOverlay card={activeCard} />
 		</DndContext>
 	);
 };

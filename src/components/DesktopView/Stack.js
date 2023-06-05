@@ -3,9 +3,12 @@ import { motion } from "framer-motion";
 import { AiOutlineFullscreen } from "react-icons/ai";
 import { useDraggable, useDroppable } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { isDraggingState } from "./store";
+import { useRecoilValue } from "recoil";
 import Card from "./Card";
 const Stack = ({ stack, handleSelect, cards }) => {
 	const [showStack, setShowStack] = useState(false);
+	const draggingFlag = useRecoilValue(isDraggingState);
 	const { attributes, listeners, isDragging, setNodeRef, transform } = useDraggable({
 		id: stack.title,
 		data: { type: "stack" },
@@ -37,10 +40,14 @@ const Stack = ({ stack, handleSelect, cards }) => {
 			<motion.div
 				initial={false}
 				animate={{
-					opacity: showStack ? 1 : 0,
+					scale: showStack || draggingFlag ? 1 : 0,
+					transition: { duration: 0.3 },
 				}}
 			>
-				<SortableContext items={stack.cards.map((card) => card.title)} strategy={verticalListSortingStrategy}>
+				<SortableContext
+					items={stack.cards.map((card) => card.title)}
+					strategy={verticalListSortingStrategy}
+				>
 					<div
 						ref={dropRef}
 						className={`${

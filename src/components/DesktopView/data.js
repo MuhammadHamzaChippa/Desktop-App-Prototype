@@ -6,8 +6,8 @@ function getRandomNumber(min, max) {
 // Helper function to generate an array of cards
 function generateCards(stackName, numCards) {
 	const cards = [];
-	for (let i = 1; i <= numCards; i++) {
-		cards.push({ title: `${stackName}-Card${i}`, x: 0, y: 0 });
+	for (let i = 1; i <= numCards ; i++) {
+		cards.push({ title: `${stackName}-C${i}`, x: 0, y: 0 });
 	}
 	return cards;
 }
