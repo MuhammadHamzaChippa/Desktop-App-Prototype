@@ -29,19 +29,20 @@ const Card = ({ card, index, zIndex, handleSelect }) => {
 	return (
 		<div ref={setNodeRef} {...attributes} {...listeners} style={style}>
 			<motion.div
-				onClick={() => handleSelect(card.title)}
+				onClick={() => handleSelect(card)}
 				whileHover={{
 					y: index !== 1 ? -10 : 0,
 					transition: { duration: 0.3 },
 				}}
-				animate={{ x: selectedCards.includes(card.title) && !isDragging ? 20 : 0 }}
-				style={{
-					// marginTop: -88,
-					// marginLeft: 12 * index,
-					background: over?.id === "desktop" && isDragging ? "pink" : "white",
-				}}
+				animate={{ x: selectedCards.includes(card) && !isDragging ? 20 : 0 }}
+				style={
+					{
+						marginTop: -88,
+						marginLeft: 12 * index,
+					}
+				}
 				key={card}
-				className="border-solid border-[2px] border-[#29AAE1] w-[176px] h-[100px] rounded-[8px] flex items-center justify-center"
+				className="bg-[white] border-solid border-[2px] border-[#29AAE1] w-[176px] h-[100px] rounded-[8px] flex items-center justify-center"
 			>
 				{card.title} <br />
 				{/* {cardZindex} */}
