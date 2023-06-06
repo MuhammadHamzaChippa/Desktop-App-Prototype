@@ -110,7 +110,14 @@ function getRandomNumber(min, max) {
 function generateCards(stackName, numCards) {
 	const cards = [];
 	for (let i = 1; i <= numCards; i++) {
-		cards.push({ title: words[Math.floor(Math.random()*words.length)], x: 0, y: 0 });
+		cards.push({
+			title: `${words[Math.floor(Math.random() * words.length)]}-${getRandomNumber(
+				1,
+				10000
+			)}`,
+			x: 0,
+			y: 0,
+		});
 	}
 	return cards;
 }
