@@ -188,6 +188,12 @@ const DesktopView = () => {
 				setStacks((stacks) => {
 					return {
 						...stacks,
+						[activeContainer]: {
+							...stacks[activeContainer],
+							cards: stacks[activeContainer].cards.filter(
+								(card) => !ids.map((c) => c.title).includes(card.title)
+							),
+						},
 						[newStack]: {
 							title: newStack,
 							cards: ids,
@@ -196,7 +202,6 @@ const DesktopView = () => {
 						},
 					};
 				});
-
 				setSelectedCards([]);
 				return;
 			}
