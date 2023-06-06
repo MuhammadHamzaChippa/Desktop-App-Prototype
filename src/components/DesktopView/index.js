@@ -56,13 +56,6 @@ const DesktopView = () => {
 				return selectedCards.filter((value) => value.id !== card.id);
 			}
 
-			if (
-				!selectedCards.length ||
-				findContainer(card.id) !== findContainer(selectedCards[0].id)
-			) {
-				return [card];
-			}
-
 			return selectedCards.concat(card);
 		});
 	};
@@ -183,24 +176,27 @@ const DesktopView = () => {
 					? [activeCard, ...selectedCards.filter((card) => card.id !== active.id)]
 					: [activeCard];
 
-				const newStack = `Stack${Object.keys(stack).length + 1}`;
-				setStacks((stacks) => {
-					return {
-						...stacks,
-						[activeContainer]: {
-							...stacks[activeContainer],
-							cards: stacks[activeContainer].cards.filter(
-								(card) => !ids.map((c) => c.id).includes(card.id)
-							),
-						},
-						[newStack]: {
-							title: newStack,
-							cards: ids,
-							x: mousePosition.x,
-							y: mousePosition.y,
-						},
+				const newStacks = {};
+				for (let key of Object.keys(stacks)) {
+					newStacks[key] = {
+						...stacks[key],
+						cards: stacks[key].cards.filter(
+							(card) => !ids.map((c) => c.id).includes(card.id)
+						),
 					};
-				});
+				}
+
+				const newStack = `Stack${Object.keys(stack).length + 1}`;
+
+				newStacks[newStack] = {
+					title: newStack,
+					cards: ids,
+					x: mousePosition.x,
+					y: mousePosition.y,
+				};
+
+				setDraggingFlag(false);
+				setStacks(newStacks);
 				setSelectedCards([]);
 				return;
 			}
