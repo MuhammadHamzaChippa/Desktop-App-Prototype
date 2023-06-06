@@ -15,3 +15,8 @@ export const isDraggingState = atom({
 	key: "isDragging",
 	default: false,
 });
+
+export const selectedStackState = atom({
+	key: "selectedStack",
+	default: null,
+});
