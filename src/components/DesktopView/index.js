@@ -46,19 +46,19 @@ const DesktopView = () => {
 		}
 
 		return Object.keys(stacks).find((key) =>
-			stacks[key].cards.map((card) => card.title).includes(id)
+			stacks[key].cards.map((card) => card.id).includes(id)
 		);
 	};
 
 	const handleSelect = (card) => {
 		setSelectedCards((selectedCards) => {
 			if (selectedCards.includes(card)) {
-				return selectedCards.filter((value) => value.title !== card.title);
+				return selectedCards.filter((value) => value.id !== card.id);
 			}
 
 			if (
 				!selectedCards.length ||
-				findContainer(card.title) !== findContainer(selectedCards[0].title)
+				findContainer(card.id) !== findContainer(selectedCards[0].id)
 			) {
 				return [card];
 			}
@@ -68,7 +68,7 @@ const DesktopView = () => {
 	};
 
 	const initialContainer = useMemo(
-		() => (activeCard ? findContainer(activeCard.title) : null),
+		() => (activeCard ? findContainer(activeCard.id) : null),
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[activeCard]
 	);
@@ -80,8 +80,7 @@ const DesktopView = () => {
 
 		return stack.cards.filter(
 			(card) =>
-				card.title === activeCard.title ||
-				!selectedCards.map((card) => card.title).includes(card.title)
+				card.id === activeCard.id || !selectedCards.map((card) => card.id).includes(card.id)
 		);
 	}
 
@@ -90,12 +89,12 @@ const DesktopView = () => {
 		if (active.data.current.type === "card") {
 			setDraggingFlag(true);
 			setSelectedCards((selectedCard) =>
-				selectedCard.map((card) => card.title).includes(active.id) ? selectedCard : []
+				selectedCard.map((card) => card.id).includes(active.id) ? selectedCard : []
 			);
 			const activeStack = findContainer(active.id);
-			setActiveCard(stacks[activeStack].cards.find((card) => card.title === active.id));
+			setActiveCard(stacks[activeStack].cards.find((card) => card.id === active.id));
 			setActiveCardIndex(
-				stacks[activeStack].cards.findIndex((card) => card.title === active.id)
+				stacks[activeStack].cards.findIndex((card) => card.id === active.id)
 			);
 		}
 	};
@@ -119,8 +118,8 @@ const DesktopView = () => {
 				setStacks((stacks) => {
 					const activeItems = stacks[activeStack].cards;
 					const overItems = stacks[overStack].cards;
-					const overIndex = overItems.findIndex((card) => card.title === overId);
-					const activeIndex = activeItems.findIndex((card) => card.title === active.id);
+					const overIndex = overItems.findIndex((card) => card.id === overId);
+					const activeIndex = activeItems.findIndex((card) => card.id === active.id);
 
 					let newIndex;
 
@@ -139,7 +138,7 @@ const DesktopView = () => {
 
 					const updatedActiveStack = {
 						...stacks[activeStack],
-						cards: stacks[activeStack].cards.filter((card) => card.title !== active.id),
+						cards: stacks[activeStack].cards.filter((card) => card.id !== active.id),
 					};
 
 					const updatedOverStack = {
@@ -181,7 +180,7 @@ const DesktopView = () => {
 			const overId = over?.id;
 			if (overId === "desktop") {
 				const ids = selectedCards.length
-					? [activeCard, ...selectedCards.filter((card) => card.title !== active.id)]
+					? [activeCard, ...selectedCards.filter((card) => card.id !== active.id)]
 					: [activeCard];
 
 				const newStack = `Stack${Object.keys(stack).length + 1}`;
@@ -191,7 +190,7 @@ const DesktopView = () => {
 						[activeContainer]: {
 							...stacks[activeContainer],
 							cards: stacks[activeContainer].cards.filter(
-								(card) => !ids.map((c) => c.title).includes(card.title)
+								(card) => !ids.map((c) => c.id).includes(card.id)
 							),
 						},
 						[newStack]: {
@@ -213,29 +212,29 @@ const DesktopView = () => {
 			}
 
 			const ids = selectedCards.length
-				? [activeCard, ...selectedCards.filter((card) => card.title !== active.id)]
+				? [activeCard, ...selectedCards.filter((card) => card.id !== active.id)]
 				: [activeCard];
 
 			const overContainer = findContainer(overId);
 
 			if (overContainer) {
 				const overItems = filterItems(stacks[overContainer]);
-				const overIndex = overItems.findIndex((card) => card.title === overId);
-				const activeIndex = overItems.findIndex((card) => card.title === active.id);
+				const overIndex = overItems.findIndex((card) => card.id === overId);
+				const activeIndex = overItems.findIndex((card) => card.id === active.id);
 				const newItems = arrayMove(overItems, activeIndex, overIndex);
-				const newActiveIndex = newItems.findIndex((card) => card.title === active.id);
+				const newActiveIndex = newItems.findIndex((card) => card.id === active.id);
 
 				const initalStack = {
 					...stacks[initialContainer],
 					cards: stacks[initialContainer].cards.filter(
-						(card) => !ids.map((c) => c.title).includes(card.title)
+						(card) => !ids.map((c) => c.id).includes(card.id)
 					),
 				};
 
 				const activeStack = {
 					...stacks[activeContainer],
 					cards: stacks[activeContainer].cards.filter(
-						(card) => !ids.map((c) => c.title).includes(card.title)
+						(card) => !ids.map((c) => c.id).includes(card.id)
 					),
 				};
 
@@ -243,7 +242,7 @@ const DesktopView = () => {
 					...stacks[overContainer],
 					cards: [
 						...newItems.slice(0, newActiveIndex + 1),
-						...ids.filter((card) => card.title !== active.id),
+						...ids.filter((card) => card.id !== active.id),
 						...newItems.slice(newActiveIndex + 1, newItems.length),
 					],
 				};
@@ -269,7 +268,7 @@ const DesktopView = () => {
 			return;
 		}
 		const allCards = Object.values(stacks).flatMap((stack) => stack.cards);
-		setSelectedCards(allCards.filter((card) => card.title.includes(searchText)));
+		setSelectedCards(allCards.filter((card) => card.id.includes(searchText)));
 	};
 
 	return (

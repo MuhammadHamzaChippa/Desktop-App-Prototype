@@ -11,7 +11,7 @@ const Card = ({ card, index, handleSelect }) => {
 	const { over } = useDndContext();
 	const selectedCards = useRecoilValue(selectedCardsState);
 	const { setNodeRef, attributes, listeners, transition, transform, isDragging } = useSortable({
-		id: card.title,
+		id: card.id,
 		data: {
 			type: "card",
 		},

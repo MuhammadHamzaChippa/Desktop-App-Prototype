@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from "uuid";
+
 const words = [
 	"Apple",
 	"Banana",
@@ -111,10 +113,8 @@ function generateCards(stackName, numCards) {
 	const cards = [];
 	for (let i = 1; i <= numCards; i++) {
 		cards.push({
-			title: `${words[Math.floor(Math.random() * words.length)]}-${getRandomNumber(
-				1,
-				10000
-			)}`,
+			id: uuidv4(),
+			title: words[Math.floor(Math.random() * words.length)],
 			x: 0,
 			y: 0,
 		});

@@ -51,7 +51,7 @@ const Stack = ({ stack, handleSelect, cards }) => {
 				}}
 			>
 				<SortableContext
-					items={stack.cards.map((card) => card.title)}
+					items={stack.cards.map((card) => card.id)}
 					strategy={verticalListSortingStrategy}
 				>
 					<div
@@ -66,7 +66,7 @@ const Stack = ({ stack, handleSelect, cards }) => {
 							.map((card, index) => {
 								return (
 									<Card
-										key={card.title}
+										key={card.id}
 										card={card}
 										index={stack.cards.length - index}
 										zIndex={index}
@@ -81,7 +81,7 @@ const Stack = ({ stack, handleSelect, cards }) => {
 				{...attributes}
 				{...listeners}
 				style={{ zIndex: stack.cards.length + 1 }}
-				className="border border-solid border-[#29AAE1] text-[#29AAE1] relative flex items-center justify-between w-[176px] bg-[white] mt-[-20px] text-[white] cursor-pointer rounded-[8px] py-[4px] px-[8px]"
+				className="border border-solid border-[#29AAE1] text-[#29AAE1] relative flex items-center justify-between w-[176px] bg-[white] mt-[-20px]  cursor-pointer rounded-[8px] py-[4px] px-[8px]"
 			>
 				{stack.title}
 				<AiOutlineFullscreen onClick={() => setShowStack(!showStack)} />
