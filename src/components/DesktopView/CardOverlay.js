@@ -7,7 +7,7 @@ const CardOverlay = ({ card, index }) => {
 		return (
 			<DragOverlay >
 				{card && (
-					<div className="bg-[white] border-solid mt-[10px] border-[2px] border-[#29AAE1] w-[176px] h-[100px] rounded-[8px] flex items-center justify-center mt-[-88px]">
+					<div className="bg-[white] border-solid  border-[2px] border-[#29AAE1] w-[176px] h-[100px] rounded-[8px] flex items-center justify-center mt-[-88px]">
 						{card.title}
 					</div>
 				)}

@@ -68,7 +68,7 @@ const Stack = ({ stack, handleSelect, cards }) => {
 						ref={dropRef}
 						className={`${
 							stack.cards.length === 0 ? "" : ""
-						} flex flex-col bg-[red] pt-[20px]`}
+						} flex flex-col  pt-[20px]`}
 						style={draggingFlag ? { maxHeight: "500px", overflow: "auto" } : {}}
 					>
 						{cards
