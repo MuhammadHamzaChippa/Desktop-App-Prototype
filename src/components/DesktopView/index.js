@@ -17,6 +17,7 @@ import CardOverlay from "./CardOverlay";
 import { stack } from "./data";
 const DesktopView = () => {
 	const [mousePosition, setMousePosition] = useState({ x: null, y: null });
+	const [searchText, setSearchText] = useState("");
 
 	useEffect(() => {
 		const updateMousePosition = (ev) => {
@@ -31,6 +32,7 @@ const DesktopView = () => {
 	const setDraggingFlag = useSetRecoilState(isDraggingState);
 	const [stacks, setStacks] = useRecoilState(stacksState);
 	const [activeCard, setActiveCard] = useState(null);
+	const [activeCardIndex, setActiveCardIndex] = useState(null);
 	const [selectedCards, setSelectedCards] = useRecoilState(selectedCardsState);
 	const sensors = useSensors(
 		useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -92,6 +94,9 @@ const DesktopView = () => {
 			);
 			const activeStack = findContainer(active.id);
 			setActiveCard(stacks[activeStack].cards.find((card) => card.title === active.id));
+			setActiveCardIndex(
+				stacks[activeStack].cards.findIndex((card) => card.title === active.id)
+			);
 		}
 	};
 
@@ -197,6 +202,7 @@ const DesktopView = () => {
 			}
 			if (!activeContainer || !overId || !initialContainer) {
 				setActiveCard(null);
+				setActiveCardIndex(null);
 				setSelectedCards([]);
 				return;
 			}
@@ -246,8 +252,19 @@ const DesktopView = () => {
 			}
 			setSelectedCards([]);
 			setActiveCard(null);
+			setActiveCardIndex(null);
 			setDraggingFlag(false);
 		}
+	};
+
+	const searchHandler = (e) => {
+		e.preventDefault();
+		if (searchText.length === 0) {
+			setSelectedCards([]);
+			return;
+		}
+		const allCards = Object.values(stacks).flatMap((stack) => stack.cards);
+		setSelectedCards(allCards.filter((card) => card.title.includes(searchText)));
 	};
 
 	return (
@@ -259,6 +276,17 @@ const DesktopView = () => {
 			sensors={sensors}
 			collisionDetection={rectIntersection}
 		>
+			<div className="bg-[#29AAE1] flex items-center justify-center gap-[5px]  py-[8px] ">
+				<form className="flex gap-[5px]" onSubmit={searchHandler}>
+					<input
+						value={searchText}
+						onChange={(e) => setSearchText(e.target.value)}
+						type="text"
+						className="px-4 py-2 rounded-lg outline-none"
+						placeholder="Search Cards"
+					/>
+				</form>
+			</div>
 			<DroppableBoard>
 				{Object.keys(stacks).map((s) => {
 					const stack = stacks[s];
@@ -272,7 +300,7 @@ const DesktopView = () => {
 					);
 				})}
 			</DroppableBoard>
-			<CardOverlay card={activeCard} />
+			<CardOverlay card={activeCard} index={activeCardIndex} />
 		</DndContext>
 	);
 };

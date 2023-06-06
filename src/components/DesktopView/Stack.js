@@ -3,11 +3,12 @@ import { motion } from "framer-motion";
 import { AiOutlineFullscreen } from "react-icons/ai";
 import { useDraggable, useDroppable } from "@dnd-kit/core";
 import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import { isDraggingState } from "./store";
+import { isDraggingState, selectedCardsState } from "./store";
 import { useRecoilValue } from "recoil";
 import Card from "./Card";
 const Stack = ({ stack, handleSelect, cards }) => {
 	const [showStack, setShowStack] = useState(false);
+	const selectedCards = useRecoilValue(selectedCardsState);
 	const draggingFlag = useRecoilValue(isDraggingState);
 	const { attributes, listeners, isDragging, setNodeRef, transform } = useDraggable({
 		id: stack.title,
@@ -40,7 +41,12 @@ const Stack = ({ stack, handleSelect, cards }) => {
 			<motion.div
 				initial={false}
 				animate={{
-					scale: showStack || draggingFlag ? 1 : 0,
+					scale:
+						showStack ||
+						draggingFlag ||
+						stack.cards.filter((card) => selectedCards.includes(card)).length > 0
+							? 1
+							: 0,
 					transition: { duration: 0.3 },
 				}}
 			>
@@ -75,7 +81,7 @@ const Stack = ({ stack, handleSelect, cards }) => {
 				{...attributes}
 				{...listeners}
 				style={{ zIndex: stack.cards.length + 1 }}
-				className="relative flex items-center justify-between w-[176px] bg-[#29AAE1] mt-[-20px] text-[white] cursor-pointer rounded-[8px] py-[4px] px-[8px]"
+				className="border border-solid border-[#29AAE1] text-[#29AAE1] relative flex items-center justify-between w-[176px] bg-[white] mt-[-20px] text-[white] cursor-pointer rounded-[8px] py-[4px] px-[8px]"
 			>
 				{stack.title}
 				<AiOutlineFullscreen onClick={() => setShowStack(!showStack)} />

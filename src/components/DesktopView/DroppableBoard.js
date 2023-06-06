@@ -5,7 +5,7 @@ const DroppableBoard = ({ children }) => {
 		id: "desktop",
 	});
 	return (
-		<div className="bg-[lightgrey] h-[100vh] relative" ref={setNodeRef}>
+		<div style={{height: "calc(100vh - 56px)"}} className="bg-[lightgrey] relative" ref={setNodeRef}>
 			{children}
 		</div>
 	);
