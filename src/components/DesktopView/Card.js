@@ -26,7 +26,9 @@ const Card = ({ card, index, handleSelect }) => {
 
 	return (
 		<div ref={setNodeRef} {...attributes} {...listeners} style={style}>
-			<motion.div
+			<motion.img
+				src={card.image}
+				alt={card.title}
 				onClick={() => handleSelect(card)}
 				whileHover={{
 					y: index !== 1 ? -10 : 0,
@@ -42,11 +44,8 @@ const Card = ({ card, index, handleSelect }) => {
 					background: over?.id === "desktop" && isDragging ? "pink" : "white",
 				}}
 				key={card}
-				className="border-solid border-[2px] border-[#29AAE1] w-[176px] h-[100px] rounded-[8px] flex items-center justify-center"
-			>
-				{card.title} <br />
-				{/* {cardZindex} */}
-			</motion.div>
+				className=" w-[176px] h-[100px] rounded-[8px] flex items-center justify-center"
+			/>
 		</div>
 	);
 };

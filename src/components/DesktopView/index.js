@@ -60,7 +60,8 @@ const DesktopView = () => {
 	};
 
 	const createCard = () => {
-		const newCard = { id: uuidv4(), x: 0, y: 0, title: getRandomWord() };
+		const animal = getRandomWord();
+		const newCard = { id: uuidv4(), x: 0, y: 0, ...animal };
 		setStacks((stacks) => {
 			return {
 				...stacks,
@@ -295,7 +296,9 @@ const DesktopView = () => {
 			return;
 		}
 		const allCards = Object.values(stacks).flatMap((stack) => stack.cards);
-		setSelectedCards(allCards.filter((card) => card.id.includes(searchText)));
+		setSelectedCards(
+			allCards.filter((card) => card.title.toLowerCase().includes(searchText.toLowerCase()))
+		);
 	};
 
 	return (
