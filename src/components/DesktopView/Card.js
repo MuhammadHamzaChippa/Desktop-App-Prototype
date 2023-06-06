@@ -32,6 +32,7 @@ const Card = ({ card, index, handleSelect }) => {
 					y: index !== 1 ? -10 : 0,
 					transition: { duration: 0.5 },
 				}}
+				initial={false}
 				animate={{
 					marginTop: draggingFlag ? 0 : -88,
 					marginLeft: draggingFlag ? 0 : 12 * index,

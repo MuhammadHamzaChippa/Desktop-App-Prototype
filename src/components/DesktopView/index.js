@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
+import { v4 as uuidv4 } from "uuid";
 import Stack from "./Stack";
 import DroppableBoard from "./DroppableBoard";
 import {
@@ -6,15 +7,16 @@ import {
 	KeyboardSensor,
 	PointerSensor,
 	TouchSensor,
+	closestCorners,
 	rectIntersection,
 	useSensor,
 	useSensors,
 } from "@dnd-kit/core";
-import { selectedCardsState, stacksState, isDraggingState } from "./store";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { selectedCardsState, stacksState, isDraggingState, selectedStackState } from "./store";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { arrayMove } from "@dnd-kit/sortable";
 import CardOverlay from "./CardOverlay";
-import { stack } from "./data";
+import { stack, getRandomWord } from "./data";
 const DesktopView = () => {
 	const [mousePosition, setMousePosition] = useState({ x: null, y: null });
 	const [searchText, setSearchText] = useState("");
@@ -31,6 +33,7 @@ const DesktopView = () => {
 
 	const setDraggingFlag = useSetRecoilState(isDraggingState);
 	const [stacks, setStacks] = useRecoilState(stacksState);
+	const selectedStack = useRecoilValue(selectedStackState);
 	const [activeCard, setActiveCard] = useState(null);
 	const [activeCardIndex, setActiveCardIndex] = useState(null);
 	const [selectedCards, setSelectedCards] = useRecoilState(selectedCardsState);
@@ -40,6 +43,34 @@ const DesktopView = () => {
 		useSensor(KeyboardSensor, {})
 	);
 
+	const createStack = () => {
+		const newStack = `Stack${Object.keys(stack).length + 1}`;
+
+		setStacks((stacks) => {
+			return {
+				...stacks,
+				[newStack]: {
+					title: newStack,
+					cards: [],
+					x: 100,
+					y: 100,
+				},
+			};
+		});
+	};
+
+	const createCard = () => {
+		const newCard = { id: uuidv4(), x: 0, y: 0, title: getRandomWord() };
+		setStacks((stacks) => {
+			return {
+				...stacks,
+				[selectedStack]: {
+					...stacks[selectedStack],
+					cards: [newCard, ...stacks[selectedStack].cards],
+				},
+			};
+		});
+	};
 	const findContainer = (id) => {
 		if (id in stacks) {
 			return id;
@@ -274,7 +305,6 @@ const DesktopView = () => {
 			onDragEnd={onDragEnd}
 			onDragCancel={() => setDraggingFlag(false)}
 			sensors={sensors}
-			collisionDetection={rectIntersection}
 		>
 			<div className="bg-[#29AAE1] flex items-center justify-center gap-[5px]  py-[8px] ">
 				<form className="flex gap-[5px]" onSubmit={searchHandler}>
@@ -285,6 +315,28 @@ const DesktopView = () => {
 						className="px-4 py-2 rounded-lg outline-none"
 						placeholder="Search Cards"
 					/>
+					{selectedCards.length > 0 && (
+						<button
+							onClick={() => setSelectedCards([])}
+							className="bg-[red] text-[white] px-4 py-2 rounded-lg"
+						>
+							Clear Searched Cards
+						</button>
+					)}
+					{!!selectedStack && (
+						<button
+							onClick={createCard}
+							className="bg-[lightblue] text-[white] px-4 py-2 rounded-lg"
+						>
+							Create Card
+						</button>
+					)}
+					<button
+						onClick={createStack}
+						className="bg-[lightblue] text-[white] px-4 py-2 rounded-lg"
+					>
+						Create Stack
+					</button>
 				</form>
 			</div>
 			<DroppableBoard>

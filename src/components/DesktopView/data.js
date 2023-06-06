@@ -108,13 +108,17 @@ function getRandomNumber(min, max) {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
+export function getRandomWord() {
+	return words[Math.floor(Math.random() * words.length)];
+}
+
 // Helper function to generate an array of cards
-function generateCards(stackName, numCards) {
+export function generateCards(stackName, numCards) {
 	const cards = [];
 	for (let i = 1; i <= numCards; i++) {
 		cards.push({
 			id: uuidv4(),
-			title: words[Math.floor(Math.random() * words.length)],
+			title: getRandomWord(),
 			x: 0,
 			y: 0,
 		});

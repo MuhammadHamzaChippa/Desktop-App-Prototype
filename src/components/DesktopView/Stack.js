@@ -69,6 +69,7 @@ const Stack = ({ stack, handleSelect, cards }) => {
 						className={`${
 							stack.cards.length === 0 ? "" : ""
 						} flex flex-col bg-[red] pt-[20px]`}
+						style={draggingFlag ? { maxHeight: "500px", overflow: "auto" } : {}}
 					>
 						{cards
 							// .slice(0)
@@ -91,14 +92,20 @@ const Stack = ({ stack, handleSelect, cards }) => {
 				onClick={handleStackSelect}
 				{...attributes}
 				{...listeners}
-				style={{ zIndex: stack.cards.length + 1 , 
-						background: selectedStack === stack.title ? "#29AAE1" : "white" ,
-						color: selectedStack === stack.title ? "white" : "#29AAE1"
+				style={{
+					zIndex: stack.cards.length + 1,
+					background: selectedStack === stack.title ? "#29AAE1" : "white",
+					color: selectedStack === stack.title ? "white" : "#29AAE1",
 				}}
 				className="border border-solid border-[#29AAE1] relative flex items-center justify-between w-[176px] bg-[white] mt-[-20px]  cursor-pointer rounded-[8px] py-[4px] px-[8px]"
 			>
 				{stack.title}
-				<AiOutlineFullscreen onClick={() => setShowStack(!showStack)} />
+				<AiOutlineFullscreen
+					onClick={(e) => {
+						e.stopPropagation();
+						setShowStack(!showStack);
+					}}
+				/>
 			</div>
 		</div>
 	);
